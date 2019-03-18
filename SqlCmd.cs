@@ -206,7 +206,8 @@ namespace com.rusanu.DBUtil {
 							"Error executing batch {0} from lines {1} to {2}",
 							batchNumber,
 							batchStartLine,
-							lineNumber));
+							lineNumber),
+							e);
 					}
 
 					batchStartLine = lineNumber + 1;
