@@ -34,6 +34,8 @@ namespace com.rusanu.DBUtil {
 		private readonly Environment _environment;
 		private SqlConnection _privateConnection;
 
+		public delegate void SqlCmdQueryCompleteMessageEventHandler(object sender, SqlCmd e);
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -77,6 +79,11 @@ namespace com.rusanu.DBUtil {
 		/// This event is raised before executing each batch in the file
 		/// </summary>
 		public event EventHandler<SqlCmdExecutingEventArgs> Executing;
+
+		/// <summary>
+		/// This event is raise after each batch completes
+		/// </summary>
+		public event EventHandler<SqlCmdCompleteEventArgs> Complete;
 
 		/// <summary>
 		/// Executes a SQL file on the given connection
@@ -248,7 +255,8 @@ namespace com.rusanu.DBUtil {
 						case "serverlist":
 						case "xml":
 						case "listvar":
-							Debug.WriteLine (String.Format ("SqlCmd: command not implemented '{0}' in line: {1}'", command, line));
+							throw new NotImplementedException(String.Format(
+								"SqlCmd: command not implemented '{0}' in line: {1}'", command, line));
 							break;
 						case "r":
 							RunCommand (line, basePath);
@@ -269,7 +277,8 @@ namespace com.rusanu.DBUtil {
 							SetVarCommand (line);
 							break;
 						default:
-							Debug.WriteLine (String.Format ("SqlCmd: Unknown command '{0}' in line: {1}", command, line));
+							throw new InvalidOperationException(String.Format(
+								"SqlCmd: Unknown command '{0}' in line: {1}", command, line));
 							break;
 					}
 				} else {
@@ -454,7 +463,12 @@ namespace com.rusanu.DBUtil {
 				cmd.CommandTimeout = 0;
 				try {
 					LastBatch = batch;
-					cmd.ExecuteNonQuery ();
+					int rows = cmd.ExecuteNonQuery();
+					if (null != Complete)
+					{
+						var args = new SqlCmdCompleteEventArgs(rows);
+						Complete(this, args);
+					}
 				} catch (SqlException sqlex) {
 					LastException = sqlex;
 					if (false == ContinueOnError) {

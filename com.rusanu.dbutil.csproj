@@ -66,7 +66,7 @@
     <FilesToSign Include='$(IntermediateOutputPath)\$(AssemblyName).dll'/>
   </ItemGroup>
   <Target Name="AfterCompile" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Exec Command="signtool sign /tr $(TimestampUrl) @(FilesToSign)"/>
+    <!--<Exec Command="signtool sign /tr $(TimestampUrl) @(FilesToSign)"/>-->
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <!-- Load up the information from the assembly -->
@@ -79,6 +79,6 @@
     <MakeDir Directories="$(PackageDir)" />
     <Message Text="NuGetSpec $(NuGetSpec)"/>
     <!-- Package the project -->
-    <Exec WorkingDirectory="$(BuildDir)" Command="NuGet.exe pack $(NuGetSpec) -OutputDir &quot;$(PackageDir)&quot; -Version %(OutputAssemblyInfo.Version) -Properties Configuration=Release -IncludeReferencedProjects -NonInteractive" />
+    <!--<Exec WorkingDirectory="$(BuildDir)" Command="NuGet.exe pack $(NuGetSpec) -OutputDir &quot;$(PackageDir)&quot; -Version %(OutputAssemblyInfo.Version) -Properties Configuration=Release -IncludeReferencedProjects -NonInteractive" />-->
   </Target>
 </Project>

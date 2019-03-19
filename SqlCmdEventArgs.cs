@@ -42,4 +42,19 @@ namespace com.rusanu.DBUtil
             Batch = batch;
         }
     }
+
+    public class SqlCmdCompleteEventArgs : EventArgs
+    {
+		public int RowsAffected { get; private set; }
+
+		internal SqlCmdCompleteEventArgs(int rowsAffected)
+		{
+			RowsAffected = rowsAffected;
+		}
+
+		public override string ToString()
+		{
+			return string.Format("({0} rows affected)", RowsAffected);
+		}
+    }
 }
